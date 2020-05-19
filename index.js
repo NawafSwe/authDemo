@@ -37,6 +37,8 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+
 /* passport serialize and deserialize are response of reading the data 
 from session decoded and encoded */
 passport.serializeUser(User.serializeUser());
@@ -91,4 +93,18 @@ app.post('/register', (req, res) => {
             });
         }
      });
+});
+
+/*  log in routes get for showing the form and 
+    post for posting the data to the db to authenticate the user */
+app.get('/login', (req, res) => {
+    res.render('login');
+ });
+
+ // in this route the passport is considered as a middleware that runs before the route runs the callback function
+app.post('/login', passport.authenticate('local', {
+    successRedirect: '/secret',
+    failureRedirect: '/login' 
+}) ,(req, res) => { 
+
 });
