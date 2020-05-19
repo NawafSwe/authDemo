@@ -1,7 +1,12 @@
 /* importing packages */
-const app = require('express')();
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const app                 = require('express')(),
+    mongoose              = require('mongoose'),
+    bodyParser            = require('body-parser'),
+    passport              = require('passport'),
+    localStrategy         = require('passport-local'),
+    passportLocalMongoose = require('passport-local-mongoose'),
+    User                  = require('./models/user');
+    
 
 /* db configuration */
 const uri = 'mongodb://localhost/auth_app';
@@ -18,16 +23,18 @@ const uri = 'mongodb://localhost/auth_app';
 );
 /* setting up the app configuration*/
 app.set('view engine', 'ejs');
-app.get('/', (req, res) => { 
-    res.render('home');
-});
+app.use(bodyParser.urlencoded({ extended: true }));
 
+
+
+/* server connection*/
 const port = 3000;
 app.listen(port, () => {
     console.log('server started');
 });
 
 
+/* app routes */
 app.get('/', (req, res) => {
     res.render('home');
 });
