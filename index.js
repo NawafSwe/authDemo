@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
     res.render('home');
 });
  
-app.get('/secret', (req, res) => {
+app.get('/secret', isLoggedIn ,(req, res) => {
   res.render('secret');
 });
 
@@ -108,3 +108,19 @@ app.post('/login', passport.authenticate('local', {
 }) ,(req, res) => { 
 
 });
+
+app.get('/logout', (req, res) => { 
+    // deleting the session 
+    req.logout();
+    res.redirect('/');
+});
+
+/* isLoggedIn function is considered to be a middleware that we need in the secret route where we need to check 
+if the user is logged in or not */
+function isLoggedIn(req, res, next) { 
+    if (req.isAuthenticated()) { 
+        // return next() means go next where it is the callback function in the route
+        return next();
+    }
+    res.redirect('/login');
+}
