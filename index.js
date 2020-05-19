@@ -23,6 +23,24 @@ const uri = 'mongodb://localhost/auth_app';
 );
 /* setting up the app configuration*/
 app.set('view engine', 'ejs');
+
+/* 
+secret is used to encode and decode and can be anything
+*/
+app.use(
+  require('express-session')({
+    secret: 'Arwa beauty',
+    resave: false,
+    saveUninitialized: false
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+/* passport serialize and deserialize are response of reading the data 
+from session decoded and encoded */
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
@@ -41,4 +59,36 @@ app.get('/', (req, res) => {
  
 app.get('/secret', (req, res) => {
   res.render('secret');
+});
+
+
+/* auth routes*/
+
+/* register route is to show the form  */
+app.get('/register', (req, res) => { 
+    res.render('register');
+});
+
+/* this route for registering new user */
+app.post('/register', (req, res) => { 
+    /* 
+    User.register(arg1,arg2,arg3);
+    arg1: creating a User object with a username and trying to save it if the username is not exist and there is no error. 
+    arg2: it will take the password and hash it then save it to the database
+    arg3:callback function.
+    */
+    User.register(new User({ username: req.body.username }), req.body.password, (err, user) => {
+        if (err) { 
+            console.log('err', err);
+            res.render('register');
+        } else {
+            console.log(user);
+            //if no error
+            passport.authenticate('local')(req, res, () => { 
+                // the passport will handel everything 'local' refers to the strategy it can be any like twitter of facebook ect..
+                //then redirect the user to what you want
+                res.redirect('/secret');
+            });
+        }
+     });
 });
