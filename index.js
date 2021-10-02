@@ -29,7 +29,7 @@ secret is used to encode and decode and can be anything
 */
 app.use(
   require('express-session')({
-    secret: 'Arwa beauty',
+    secret: 'ARBT',
     resave: false,
     saveUninitialized: false
   })
